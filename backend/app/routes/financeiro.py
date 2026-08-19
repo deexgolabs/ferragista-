@@ -61,8 +61,8 @@ def criar_lancamento():
     dados = request.get_json() or {}
     if dados.get("tipo") not in TIPOS_VALIDOS:
         return jsonify({"erro": f"tipo inválido. Use um de: {', '.join(TIPOS_VALIDOS)}"}), 400
-    if not dados.get("valor"):
-        return jsonify({"erro": "valor é obrigatório"}), 400
+    if dados.get("valor") is None or float(dados["valor"]) <= 0:
+        return jsonify({"erro": "valor é obrigatório e deve ser maior que zero"}), 400
 
     status = dados.get("status", "pago")
     if status not in STATUS_VALIDOS:
@@ -88,7 +88,12 @@ def criar_lancamento():
 @perfis_permitidos(*_GESTAO)
 def atualizar_lancamento(lancamento_id):
     lancamento = query_tenant(Lancamento).filter_by(id=lancamento_id).first_or_404()
+    if lancamento.origem != "manual":
+        return jsonify({"erro": "apenas lançamentos manuais podem ser editados diretamente"}), 400
+
     dados = request.get_json() or {}
+    if "valor" in dados and float(dados["valor"]) <= 0:
+        return jsonify({"erro": "valor deve ser maior que zero"}), 400
 
     for campo in ["categoria", "descricao", "valor"]:
         if campo in dados:

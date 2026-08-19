@@ -4,7 +4,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.extensions import db
 from app.models.produto import Produto
 from app.models.movimentacao_estoque import MovimentacaoEstoque, TIPOS_VALIDOS
-from app.services.estoque_service import registrar_movimentacao
+from app.services.estoque_service import registrar_movimentacao, EstoqueInsuficienteError
 from app.utils.rbac import perfis_permitidos
 from app.utils.tenant import query_tenant, loja_atual_id
 
@@ -37,11 +37,12 @@ def criar_movimentacao():
 
     produto = query_tenant(Produto).filter_by(id=produto_id).first_or_404()
 
-    if tipo == "saida" and float(quantidade) > float(produto.quantidade_estoque):
-        return jsonify({"erro": "quantidade maior que o estoque disponível"}), 400
+    try:
+        movimentacao = registrar_movimentacao(
+            loja_atual_id(), produto, tipo, quantidade, motivo=dados.get("motivo"), usuario_id=get_jwt_identity()
+        )
+    except EstoqueInsuficienteError as erro:
+        return jsonify({"erro": str(erro)}), 400
 
-    movimentacao = registrar_movimentacao(
-        loja_atual_id(), produto, tipo, quantidade, motivo=dados.get("motivo"), usuario_id=get_jwt_identity()
-    )
     db.session.commit()
     return jsonify(movimentacao.to_dict()), 201

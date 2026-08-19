@@ -76,6 +76,17 @@ class TestCompras:
         assert resposta.status_code == 200
         assert resposta.get_json()["status"] == "cancelada"
 
+    def test_compra_com_preco_unitario_negativo_e_rejeitada(self, client, loja_admin):
+        """Regressão: preço unitário negativo deixaria compra.total() negativo,
+        inflando o saldo/lucro do dashboard quando a conta a pagar fosse gerada."""
+        produto = _criar_produto(client, loja_admin["headers"])
+        resposta = client.post(
+            "/api/compras",
+            headers=loja_admin["headers"],
+            json={"itens": [{"produto_id": produto["id"], "quantidade": 10, "preco_unitario": -0.10}]},
+        )
+        assert resposta.status_code == 400
+
 
 class TestFinanceiro:
     def test_criar_lancamento_manual_pago(self, client, loja_admin):
@@ -103,6 +114,44 @@ class TestFinanceiro:
 
         segunda_tentativa = client.put(f"/api/financeiro/{criado['id']}/quitar", headers=loja_admin["headers"])
         assert segunda_tentativa.status_code == 400
+
+    def test_criar_lancamento_com_valor_negativo_e_rejeitado(self, client, loja_admin):
+        """Regressão: `not dados.get("valor")` só rejeitava zero — um valor
+        negativo passava direto e virava soma em vez de subtração no resumo."""
+        resposta = client.post(
+            "/api/financeiro",
+            headers=loja_admin["headers"],
+            json={"tipo": "saida", "categoria": "aluguel", "valor": -500},
+        )
+        assert resposta.status_code == 400
+
+    def test_nao_pode_editar_lancamento_de_origem_venda(self, client, loja_admin):
+        """Regressão: editar o valor de um lançamento gerado por uma venda o
+        dessincroniza do total real da venda, e pode incluir quitação errada."""
+        produto = _criar_produto(client, loja_admin["headers"])
+        client.post(
+            "/api/vendas",
+            headers=loja_admin["headers"],
+            json={"forma_pagamento": "dinheiro", "itens": [{"produto_id": produto["id"], "quantidade": 5}]},
+        )
+        lancamento = client.get("/api/financeiro", headers=loja_admin["headers"]).get_json()[0]
+
+        resposta = client.put(
+            f"/api/financeiro/{lancamento['id']}", headers=loja_admin["headers"], json={"valor": 1}
+        )
+        assert resposta.status_code == 400
+
+    def test_editar_lancamento_manual_com_valor_negativo_e_rejeitado(self, client, loja_admin):
+        criado = client.post(
+            "/api/financeiro",
+            headers=loja_admin["headers"],
+            json={"tipo": "saida", "categoria": "aluguel", "valor": 500},
+        ).get_json()
+
+        resposta = client.put(
+            f"/api/financeiro/{criado['id']}", headers=loja_admin["headers"], json={"valor": -1}
+        )
+        assert resposta.status_code == 400
 
     def test_nao_pode_excluir_lancamento_de_origem_venda(self, client, loja_admin):
         produto = _criar_produto(client, loja_admin["headers"])

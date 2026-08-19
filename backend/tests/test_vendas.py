@@ -50,6 +50,47 @@ class TestVendaAVista:
         assert venda["subtotal"] == 5.0
         assert venda["total"] == 4.0
 
+    def test_venda_com_desconto_negativo_e_rejeitada(self, client, loja_admin):
+        produto = _criar_produto(client, loja_admin["headers"])
+        resposta = client.post(
+            "/api/vendas",
+            headers=loja_admin["headers"],
+            json={"forma_pagamento": "dinheiro", "desconto": -10, "itens": [{"produto_id": produto["id"], "quantidade": 1}]},
+        )
+        assert resposta.status_code == 400
+
+    def test_venda_com_desconto_maior_que_subtotal_e_rejeitada(self, client, loja_admin):
+        produto = _criar_produto(client, loja_admin["headers"])
+        resposta = client.post(
+            "/api/vendas",
+            headers=loja_admin["headers"],
+            json={
+                "forma_pagamento": "dinheiro",
+                "desconto": 999,
+                "itens": [{"produto_id": produto["id"], "quantidade": 1}],
+            },
+        )
+        assert resposta.status_code == 400
+
+    def test_venda_com_preco_unitario_negativo_e_rejeitada(self, client, loja_admin):
+        """Regressão: um vendedor não pode forjar um preço negativo pra
+        derrubar o total da venda (ou até deixá-lo negativo)."""
+        produto = _criar_produto(client, loja_admin["headers"], quantidade_estoque=100)
+        resposta = client.post(
+            "/api/vendas",
+            headers=loja_admin["headers"],
+            json={
+                "forma_pagamento": "dinheiro",
+                "itens": [{"produto_id": produto["id"], "quantidade": 1, "preco_unitario": -5}],
+            },
+        )
+        assert resposta.status_code == 400
+
+        # nada deve ter sido persistido: nem a venda, nem a baixa de estoque
+        assert client.get("/api/vendas", headers=loja_admin["headers"]).get_json() == []
+        produto_atual = client.get(f"/api/produtos/{produto['id']}", headers=loja_admin["headers"]).get_json()
+        assert produto_atual["quantidade_estoque"] == 100
+
     def test_venda_com_quantidade_maior_que_estoque_e_rejeitada(self, client, loja_admin):
         produto = _criar_produto(client, loja_admin["headers"], quantidade_estoque=5)
 
@@ -174,6 +215,43 @@ class TestCancelamentoVenda:
         client.put(f"/api/vendas/{venda['id']}/cancelar", headers=loja_admin["headers"])
         segunda_tentativa = client.put(f"/api/vendas/{venda['id']}/cancelar", headers=loja_admin["headers"])
         assert segunda_tentativa.status_code == 400
+
+    def test_cancelar_venda_fiado_ja_quitada_nao_mexe_em_divida_de_outra_venda(self, client, loja_admin):
+        """Regressão: cancelar uma venda fiado que já tinha sido paga não pode
+        subtrair de novo do saldo_devedor — isso abateria (por engano) a
+        dívida de uma venda fiado diferente e ainda pendente do mesmo cliente."""
+        produto = _criar_produto(client, loja_admin["headers"], quantidade_estoque=1000)
+        cliente = _criar_cliente(client, loja_admin["headers"])
+
+        venda_paga = client.post(
+            "/api/vendas",
+            headers=loja_admin["headers"],
+            json={
+                "forma_pagamento": "fiado",
+                "cliente_id": cliente["id"],
+                "itens": [{"produto_id": produto["id"], "quantidade": 400, "preco_unitario": 0.25}],
+            },
+        ).get_json()
+        lancamento_pago = client.get("/api/financeiro?status=pendente", headers=loja_admin["headers"]).get_json()[0]
+        client.put(f"/api/financeiro/{lancamento_pago['id']}/quitar", headers=loja_admin["headers"])
+
+        client.post(
+            "/api/vendas",
+            headers=loja_admin["headers"],
+            json={
+                "forma_pagamento": "fiado",
+                "cliente_id": cliente["id"],
+                "itens": [{"produto_id": produto["id"], "quantidade": 200, "preco_unitario": 0.25}],
+            },
+        )
+
+        cliente_antes = client.get("/api/clientes", headers=loja_admin["headers"]).get_json()[0]
+        assert cliente_antes["saldo_devedor"] == 50.0  # só a segunda venda, a primeira já foi paga
+
+        client.put(f"/api/vendas/{venda_paga['id']}/cancelar", headers=loja_admin["headers"])
+
+        cliente_depois = client.get("/api/clientes", headers=loja_admin["headers"]).get_json()[0]
+        assert cliente_depois["saldo_devedor"] == 50.0  # não pode ter zerado a dívida da segunda venda
 
 
 class TestCaixa:

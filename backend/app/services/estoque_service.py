@@ -1,5 +1,12 @@
+from sqlalchemy import update
+
 from app.extensions import db
 from app.models.movimentacao_estoque import MovimentacaoEstoque
+from app.models.produto import Produto
+
+
+class EstoqueInsuficienteError(ValueError):
+    pass
 
 
 def registrar_movimentacao(loja_id, produto, tipo, quantidade, motivo=None, usuario_id=None):
@@ -13,7 +20,23 @@ def registrar_movimentacao(loja_id, produto, tipo, quantidade, motivo=None, usua
     if tipo == "entrada":
         produto.quantidade_estoque = float(produto.quantidade_estoque) + quantidade
     elif tipo == "saida":
-        produto.quantidade_estoque = float(produto.quantidade_estoque) - quantidade
+        # UPDATE atômico condicionado ao estoque atual (em vez de checar em
+        # Python e só depois escrever) — evita que duas vendas concorrentes
+        # do último item, lidas antes de qualquer uma commitar, passem pela
+        # checagem e derrubem o estoque para negativo.
+        resultado = db.session.execute(
+            update(Produto)
+            .where(Produto.id == produto.id, Produto.quantidade_estoque >= quantidade)
+            .values(quantidade_estoque=Produto.quantidade_estoque - quantidade)
+            # Sem isso, o SQLAlchemy tenta recalcular o novo valor em Python
+            # pra sincronizar o objeto em memória, e mistura Decimal (coluna
+            # Numeric) com float (quantidade) — TypeError. O db.session.refresh()
+            # logo abaixo já cuida de sincronizar o objeto a partir do banco.
+            .execution_options(synchronize_session=False)
+        )
+        if resultado.rowcount == 0:
+            raise EstoqueInsuficienteError(f"estoque insuficiente para {produto.nome}")
+        db.session.refresh(produto)
     elif tipo == "ajuste":
         produto.quantidade_estoque = quantidade
     else:

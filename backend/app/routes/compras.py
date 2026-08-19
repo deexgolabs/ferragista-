@@ -45,23 +45,33 @@ def criar_compra():
         return jsonify({"erro": "informe ao menos um item"}), 400
 
     loja_id = loja_atual_id()
-    compra = Compra(loja_id=loja_id, fornecedor_id=dados.get("fornecedor_id"), observacoes=dados.get("observacoes"))
-    db.session.add(compra)
-    db.session.flush()
 
+    # Valida todos os itens antes de gravar qualquer coisa — evita um
+    # cabeçalho de compra "órfão" (sem itens) se algum item no meio da
+    # lista falhar a validação.
+    itens_validados = []
     for item in itens:
         produto = query_tenant(Produto).filter_by(id=item.get("produto_id")).first()
         if not produto:
             return jsonify({"erro": f"produto {item.get('produto_id')} não encontrado"}), 400
         if not item.get("quantidade") or float(item["quantidade"]) <= 0:
             return jsonify({"erro": "quantidade deve ser maior que zero"}), 400
+        preco_unitario = item.get("preco_unitario", produto.preco_custo or 0)
+        if float(preco_unitario) < 0:
+            return jsonify({"erro": f"preço unitário inválido para {produto.nome}"}), 400
+        itens_validados.append((produto, item["quantidade"], preco_unitario))
 
+    compra = Compra(loja_id=loja_id, fornecedor_id=dados.get("fornecedor_id"), observacoes=dados.get("observacoes"))
+    db.session.add(compra)
+    db.session.flush()
+
+    for produto, quantidade, preco_unitario in itens_validados:
         db.session.add(
             CompraItem(
                 compra_id=compra.id,
                 produto_id=produto.id,
-                quantidade=item["quantidade"],
-                preco_unitario=item.get("preco_unitario", produto.preco_custo or 0),
+                quantidade=quantidade,
+                preco_unitario=preco_unitario,
             )
         )
 
