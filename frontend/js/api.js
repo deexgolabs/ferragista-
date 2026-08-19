@@ -1,4 +1,10 @@
-const API_BASE_URL = "http://localhost:5000/api";
+// Em localhost (desenvolvimento), o backend roda separado na porta 5000.
+// Em qualquer outro domínio (produção), backend e frontend são servidos do
+// mesmo domínio, então um caminho relativo já resolve certo.
+const API_BASE_URL =
+  window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+    ? "http://localhost:5000/api"
+    : "/api";
 
 function getToken() {
   return localStorage.getItem("token");
