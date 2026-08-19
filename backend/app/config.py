@@ -4,6 +4,12 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# A pasta instance/ não é versionada no git (só o .db dentro dela é
+# ignorado, mas git não versiona pasta vazia nenhuma) — então ela nunca
+# existe num clone novo. Sem isso, o SQLite falha com "unable to open
+# database file" na primeira tentativa de conexão.
+(BASE_DIR / "instance").mkdir(parents=True, exist_ok=True)
+
 
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-key")
