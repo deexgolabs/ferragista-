@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, redirect
 
 from app.config import Config
 from app.extensions import db, migrate, jwt, cors, mail, limiter
@@ -16,6 +16,10 @@ def create_app(config_class=Config):
     limiter.init_app(app)
 
     register_blueprints(app)
+
+    @app.get("/")
+    def raiz():
+        return redirect("/pages/login.html")
 
     return app
 
