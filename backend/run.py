@@ -7,7 +7,7 @@ load_dotenv()
 
 from app import create_app
 from app.extensions import db
-from app.models import Usuario, Loja, Produto, Lancamento
+from app.models import Usuario, Loja, Produto, Lancamento, Categoria, Cliente, Fornecedor
 from app.utils.email import enviar_email
 
 app = create_app()
@@ -29,6 +29,56 @@ def seed():
     db.session.add(dono)
     db.session.commit()
     print("Super admin criado: dono@ferragista.com / trocarSenha123 — troque a senha após o primeiro login.")
+
+
+@app.cli.command("seed-demo")
+def seed_demo():
+    """Cria uma loja de demonstração já com produtos/cliente/fornecedor de
+    exemplo — flask --app run.py seed-demo. Útil pra mostrar o sistema sem
+    precisar passar pelo cadastro público antes."""
+    email = "demo@ferragista.com"
+    if Usuario.query.filter_by(email=email).first():
+        print("Loja demo já existe. Login: demo@ferragista.com / demo1234")
+        return
+
+    loja = Loja(
+        nome="Ferragem Demo",
+        email_contato=email,
+        plano="premium",
+        status="ativa",
+    )
+    db.session.add(loja)
+    db.session.flush()
+
+    admin = Usuario(nome="Admin Demo", email=email, perfil="admin", loja_id=loja.id)
+    admin.set_senha("demo1234")
+    db.session.add(admin)
+
+    categoria = Categoria(loja_id=loja.id, nome="Ferramentas")
+    db.session.add(categoria)
+    db.session.flush()
+
+    produtos = [
+        Produto(loja_id=loja.id, categoria_id=categoria.id, nome="Parafuso 3/4", codigo="P001",
+                unidade="un", preco_custo=0.10, preco_venda=0.25, quantidade_estoque=500, estoque_minimo=50),
+        Produto(loja_id=loja.id, categoria_id=categoria.id, nome="Martelo", codigo="M001",
+                unidade="un", preco_custo=10.00, preco_venda=25.90, quantidade_estoque=15, estoque_minimo=20),
+        Produto(loja_id=loja.id, categoria_id=categoria.id, nome="Prego 18x27", codigo="PR18",
+                unidade="kg", preco_custo=4.50, preco_venda=8.90, quantidade_estoque=50, estoque_minimo=5),
+        Produto(loja_id=loja.id, categoria_id=categoria.id, nome="Trena 5m", codigo="T005",
+                unidade="un", preco_custo=8.00, preco_venda=19.90, quantidade_estoque=2, estoque_minimo=3),
+    ]
+    db.session.add_all(produtos)
+
+    cliente = Cliente(loja_id=loja.id, nome="Cliente Exemplo", telefone="(11) 99999-0000", limite_fiado=500)
+    db.session.add(cliente)
+
+    fornecedor = Fornecedor(loja_id=loja.id, nome="Distribuidora Exemplo Ltda", telefone="(11) 3333-0000")
+    db.session.add(fornecedor)
+
+    db.session.commit()
+    print("Loja demo criada — login: demo@ferragista.com / demo1234")
+    print("(Trena 5m e Martelo já estão com estoque baixo de propósito, pra mostrar os alertas.)")
 
 
 @app.cli.command("avisar-trials")
