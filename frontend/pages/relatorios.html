@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Relatórios — Ferragista+</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <script src="../js/tema.js"></script>
+  <link rel="icon" href="/assets/img/icon-192.png" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#d15a12" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="apple-touch-icon" href="/assets/img/icon-192.png" />
+</head>
+<body>
+  <div class="app">
+    <div id="barra-lateral" data-pagina="relatorios"></div>
+    <main class="conteudo">
+      <div class="topo-pagina">
+        <h1>Relatórios</h1>
+      </div>
+
+      <div class="grade-cartoes">
+        <div class="painel">
+          <h2>Produtos mais vendidos (30 dias)</h2>
+          <table>
+            <thead><tr><th>Produto</th><th>Quantidade</th><th>Valor</th></tr></thead>
+            <tbody id="tabela-mais-vendidos"></tbody>
+          </table>
+        </div>
+
+        <div class="painel">
+          <h2>Estoque baixo</h2>
+          <table>
+            <thead><tr><th>Produto</th><th>Estoque</th><th>Mínimo</th></tr></thead>
+            <tbody id="tabela-estoque-baixo"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="painel" style="margin-top: 1.5rem;">
+        <h2>Vendas por dia (30 dias)</h2>
+        <table>
+          <thead><tr><th>Data</th><th>Total vendido</th></tr></thead>
+          <tbody id="tabela-vendas-periodo"></tbody>
+        </table>
+      </div>
+
+      <div class="painel" style="margin-top: 1.5rem;">
+        <h2>Curva ABC de produtos (30 dias)</h2>
+        <p class="texto-suave-pequeno" style="margin-top: -0.6rem;">Classe A = produtos que somam até 80% do faturamento; B = até 95%; C = o restante.</p>
+        <table>
+          <thead><tr><th>Produto</th><th>Valor vendido</th><th>% do total</th><th>Classe</th></tr></thead>
+          <tbody id="tabela-curva-abc"></tbody>
+        </table>
+      </div>
+
+      <div class="grade-cartoes" style="margin-top: 1.5rem;">
+        <div class="painel">
+          <h2>Margem de lucro (30 dias)</h2>
+          <div class="valor" id="valor-margem-total" style="font-size: 1.6rem;">—</div>
+          <p class="texto-suave-pequeno" id="texto-margem-percentual"></p>
+          <table style="margin-top: 0.6rem;">
+            <thead><tr><th>Produto</th><th>Margem</th><th>%</th></tr></thead>
+            <tbody id="tabela-margem-produto"></tbody>
+          </table>
+        </div>
+
+        <div class="painel">
+          <h2>Comissão de vendedores (30 dias)</h2>
+          <table>
+            <thead><tr><th>Vendedor</th><th>Total vendido</th><th>%</th><th>Comissão devida</th></tr></thead>
+            <tbody id="tabela-comissoes"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/icones.js"></script>
+  <script src="../js/layout.js"></script>
+  <script src="../js/relatorios.js"></script>
+  <script src="../js/pwa.js"></script>
+</body>
+</html>

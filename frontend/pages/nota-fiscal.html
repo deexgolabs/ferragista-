@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Nota fiscal — Ferragista+</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <script src="../js/tema.js"></script>
+  <link rel="icon" href="/assets/img/icon-192.png" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#d15a12" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="apple-touch-icon" href="/assets/img/icon-192.png" />
+</head>
+<body>
+  <div class="app">
+    <div id="barra-lateral" data-pagina="nota-fiscal"></div>
+    <main class="conteudo">
+      <div class="topo-pagina">
+        <h1>Nota fiscal (NF-e/NFC-e)</h1>
+      </div>
+
+      <div class="painel" style="margin-bottom: 1.5rem;">
+        <h2>Emissão fiscal ainda não está ativa nesta loja</h2>
+        <p class="texto-suave-pequeno">
+          O Ferragista+ ainda não emite NF-e/NFC-e de verdade. Emitir nota fiscal exige um
+          <strong>certificado digital A1</strong> da loja e comunicação direta com a SEFAZ do seu estado, ou a
+          contratação de um provedor terceiro que simplifica isso (ex:
+          <a href="https://focusnfe.com.br" target="_blank" rel="noopener">Focus NFe</a>,
+          <a href="https://plugnotas.com.br" target="_blank" rel="noopener">PlugNotas</a> ou
+          <a href="https://enotasgw.com.br" target="_blank" rel="noopener">eNotas</a>).
+          Preencha os campos abaixo quando tiver escolhido e contratado um desses provedores — isso só
+          <em>guarda a configuração</em>; a integração de emissão em si ainda precisa ser desenvolvida.
+        </p>
+      </div>
+
+      <div class="painel">
+        <h2>Configuração do provedor</h2>
+        <form id="form-config-nfe">
+          <div class="grade-campos">
+            <div class="campo">
+              <label>Provedor</label>
+              <select id="nfe-provedor">
+                <option value="">Nenhum selecionado</option>
+                <option value="focus_nfe">Focus NFe</option>
+                <option value="plugnotas">PlugNotas</option>
+                <option value="enotas">eNotas</option>
+                <option value="outro">Outro</option>
+              </select>
+            </div>
+            <div class="campo">
+              <label>Ambiente</label>
+              <select id="nfe-ambiente">
+                <option value="homologacao">Homologação (testes)</option>
+                <option value="producao">Produção</option>
+              </select>
+            </div>
+          </div>
+          <div class="campo">
+            <label>Chave de API do provedor</label>
+            <input type="text" id="nfe-api-key" placeholder="Cole aqui a chave fornecida pelo provedor" />
+            <p class="texto-suave-pequeno" id="nfe-chave-atual" style="margin-top: 0.4rem;"></p>
+          </div>
+          <div class="campo">
+            <label>CNPJ emitente</label>
+            <input type="text" id="nfe-cnpj" placeholder="00.000.000/0000-00" />
+          </div>
+          <button type="submit" class="btn">Salvar configuração</button>
+          <p id="mensagem-config-nfe" class="oculto" style="margin-top: 0.8rem; font-size: 0.85rem;"></p>
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/icones.js"></script>
+  <script src="../js/layout.js"></script>
+  <script src="../js/nota-fiscal.js"></script>
+  <script src="../js/pwa.js"></script>
+</body>
+</html>

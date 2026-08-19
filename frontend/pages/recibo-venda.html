@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Recibo de venda — Ferragista+</title>
+  <style>
+    :root { color-scheme: light; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Courier New", monospace;
+      background: #e5e7eb;
+      display: flex;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+    .cupom {
+      width: 320px;
+      background: #fff;
+      padding: 1.2rem 1rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .cupom h1 { font-size: 15px; text-align: center; margin: 0 0 0.2rem; }
+    .cupom .subtitulo { text-align: center; font-size: 11px; color: #444; margin-bottom: 0.8rem; }
+    .linha-tracejada { border-top: 1px dashed #999; margin: 0.6rem 0; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; padding: 0.15rem 0; font-size: 12px; }
+    th:last-child, td:last-child { text-align: right; }
+    .total { display: flex; justify-content: space-between; font-size: 15px; font-weight: bold; margin-top: 0.4rem; }
+    .rodape { text-align: center; font-size: 11px; color: #555; margin-top: 0.8rem; }
+    .btn-imprimir {
+      display: block; width: 320px; margin: 1rem auto 0; padding: 0.6rem; font-size: 14px;
+      background: #d15a12; color: #fff; border: none; border-radius: 6px; cursor: pointer;
+    }
+    @media print {
+      body { background: #fff; padding: 0; }
+      .btn-imprimir { display: none; }
+      .cupom { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <div class="cupom" id="cupom-conteudo">Carregando...</div>
+    <button class="btn-imprimir" id="btn-imprimir" onclick="window.print()">Imprimir</button>
+  </div>
+
+  <script src="../js/api.js"></script>
+  <script>
+    function formatarMoedaRecibo(valor) {
+      return Number(valor || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+    }
+
+    async function carregarRecibo() {
+      const id = new URLSearchParams(window.location.search).get("id");
+      const venda = await Api.obterVenda(id);
+
+      const itensHtml = venda.itens
+        .map((item) => `
+          <tr>
+            <td>${item.quantidade} x ${item.produto_nome}</td>
+            <td>${formatarMoedaRecibo(item.subtotal)}</td>
+          </tr>
+        `)
+        .join("");
+
+      document.getElementById("cupom-conteudo").innerHTML = `
+        <h1>Ferragista+</h1>
+        <div class="subtitulo">Comprovante de venda #${venda.id}</div>
+        <div class="linha-tracejada"></div>
+        <div>${new Date(venda.criado_em).toLocaleString("pt-BR")}</div>
+        <div>Cliente: ${venda.cliente_nome || "não identificado"}</div>
+        <div>Vendedor: ${venda.usuario_nome || "—"}</div>
+        <div class="linha-tracejada"></div>
+        <table>${itensHtml}</table>
+        <div class="linha-tracejada"></div>
+        ${venda.desconto > 0 ? `<div>Subtotal: ${formatarMoedaRecibo(venda.subtotal)}</div><div>Desconto: -${formatarMoedaRecibo(venda.desconto)}</div>` : ""}
+        <div class="total"><span>Total</span><span>${formatarMoedaRecibo(venda.total)}</span></div>
+        <div>Forma de pagamento: ${venda.forma_pagamento.replace("_", " ")}</div>
+        <div class="rodape">Obrigado pela preferência!</div>
+      `;
+    }
+
+    document.addEventListener("DOMContentLoaded", carregarRecibo);
+  </script>
+</body>
+</html>

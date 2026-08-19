@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Compras — Ferragista+</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <script src="../js/tema.js"></script>
+  <link rel="icon" href="/assets/img/icon-192.png" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#d15a12" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="apple-touch-icon" href="/assets/img/icon-192.png" />
+</head>
+<body>
+  <div class="app">
+    <div id="barra-lateral" data-pagina="compras"></div>
+    <main class="conteudo">
+      <div class="topo-pagina">
+        <h1>Compras</h1>
+        <button class="btn" id="btn-nova-compra">Novo pedido de compra</button>
+      </div>
+
+      <div class="painel">
+        <table>
+          <thead>
+            <tr><th>Data</th><th>Fornecedor</th><th>Itens</th><th>Total</th><th>Status</th><th></th></tr>
+          </thead>
+          <tbody id="tabela-compras"></tbody>
+        </table>
+      </div>
+
+      <dialog id="dialog-compra" class="dialog-largo">
+        <form id="form-compra" method="dialog">
+          <h2>Novo pedido de compra</h2>
+          <div class="campo">
+            <label>Fornecedor</label>
+            <select id="compra-fornecedor"><option value="">Sem fornecedor definido</option></select>
+          </div>
+
+          <div class="grade-campos" style="align-items: end;">
+            <div class="campo">
+              <label>Produto</label>
+              <select id="compra-item-produto"></select>
+            </div>
+            <div class="campo"><label>Quantidade</label><input type="number" step="0.001" id="compra-item-quantidade" value="1" /></div>
+          </div>
+          <div class="grade-campos" style="align-items: end;">
+            <div class="campo"><label>Preço unitário</label><input type="number" step="0.01" id="compra-item-preco" /></div>
+            <div class="campo"><button type="button" class="btn btn-secundario" id="btn-add-item-compra">Adicionar item</button></div>
+          </div>
+
+          <div id="lista-itens-compra" style="margin: 1rem 0;"></div>
+          <div class="pdv-total"><span>Total</span><span id="compra-total-valor">R$ 0,00</span></div>
+
+          <div class="campo" style="margin-top: 1rem;"><label>Observações</label><input type="text" id="compra-observacoes" /></div>
+
+          <div class="form-inline" style="margin-top: 1rem;">
+            <button type="submit" class="btn">Salvar pedido</button>
+            <button type="button" class="btn btn-secundario" id="btn-cancelar-compra">Cancelar</button>
+          </div>
+        </form>
+      </dialog>
+
+      <dialog id="dialog-receber-compra">
+        <h2>Receber compra</h2>
+        <p class="texto-suave-pequeno">Confirmar o recebimento dá entrada nos itens no estoque e gera uma conta a pagar pelo valor total.</p>
+        <div class="campo"><label>Vencimento da conta a pagar (opcional)</label><input type="date" id="receber-compra-vencimento" /></div>
+        <div class="form-inline">
+          <button type="button" class="btn" id="btn-confirmar-recebimento">Confirmar recebimento</button>
+          <button type="button" class="btn btn-secundario" id="btn-cancelar-receber-compra">Cancelar</button>
+        </div>
+      </dialog>
+    </main>
+  </div>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/icones.js"></script>
+  <script src="../js/layout.js"></script>
+  <script src="../js/compras.js"></script>
+  <script src="../js/pwa.js"></script>
+</body>
+</html>

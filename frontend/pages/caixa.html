@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Caixa — Ferragista+</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <script src="../js/tema.js"></script>
+  <link rel="icon" href="/assets/img/icon-192.png" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#d15a12" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="apple-touch-icon" href="/assets/img/icon-192.png" />
+</head>
+<body>
+  <div class="app">
+    <div id="barra-lateral" data-pagina="caixa"></div>
+    <main class="conteudo">
+      <div class="topo-pagina">
+        <h1>Caixa</h1>
+      </div>
+
+      <div id="bloco-caixa-fechado" class="painel oculto">
+        <h2>Nenhum caixa aberto</h2>
+        <p class="texto-suave-pequeno">Abra o caixa informando o valor inicial em dinheiro (troco) antes de começar a vender.</p>
+        <div class="form-inline">
+          <input type="number" step="0.01" id="valor-abertura" placeholder="Valor de abertura (R$)" value="0" />
+          <button type="button" class="btn" id="btn-abrir-caixa">Abrir caixa</button>
+        </div>
+      </div>
+
+      <div id="bloco-caixa-aberto" class="oculto">
+        <div class="grade-indicadores">
+          <div class="indicador"><div><div class="valor" id="valor-abertura-atual">—</div><div class="rotulo">Valor de abertura</div></div></div>
+          <div class="indicador"><div><div class="valor" id="valor-total-vendas">—</div><div class="rotulo">Total vendido</div></div></div>
+          <div class="indicador"><div><div class="valor" id="valor-suprimentos">—</div><div class="rotulo">Suprimentos</div></div></div>
+          <div class="indicador"><div><div class="valor" id="valor-sangrias">—</div><div class="rotulo">Sangrias</div></div></div>
+        </div>
+
+        <div class="grade-cartoes" style="margin-bottom: 1.5rem;">
+          <div class="painel">
+            <h2>Vendas por forma de pagamento</h2>
+            <table>
+              <thead><tr><th>Forma</th><th>Total</th></tr></thead>
+              <tbody id="tabela-vendas-forma"></tbody>
+            </table>
+          </div>
+          <div class="painel">
+            <h2>Dinheiro esperado na gaveta</h2>
+            <div class="valor" id="valor-esperado-dinheiro" style="font-size: 1.8rem;">—</div>
+            <p class="texto-suave-pequeno">Abertura + vendas em dinheiro + suprimentos − sangrias</p>
+          </div>
+        </div>
+
+        <div class="painel" style="margin-bottom: 1.5rem;">
+          <h2>Sangria / suprimento</h2>
+          <div class="form-inline">
+            <select id="movimentacao-caixa-tipo">
+              <option value="suprimento">Suprimento (entrada de dinheiro no caixa)</option>
+              <option value="sangria">Sangria (retirada de dinheiro do caixa)</option>
+            </select>
+            <input type="number" step="0.01" id="movimentacao-caixa-valor" placeholder="Valor" />
+            <input type="text" id="movimentacao-caixa-motivo" placeholder="Motivo (opcional)" />
+            <button type="button" class="btn btn-secundario" id="btn-registrar-movimentacao-caixa">Registrar</button>
+          </div>
+          <table>
+            <thead><tr><th>Data</th><th>Tipo</th><th>Valor</th><th>Motivo</th><th>Usuário</th></tr></thead>
+            <tbody id="tabela-movimentacoes-caixa"></tbody>
+          </table>
+        </div>
+
+        <div class="painel">
+          <h2>Fechar caixa</h2>
+          <div class="grade-campos">
+            <div class="campo"><label>Valor contado na gaveta (R$)</label><input type="number" step="0.01" id="valor-fechamento" /></div>
+            <div class="campo"><label>Observações</label><input type="text" id="fechamento-observacoes" /></div>
+          </div>
+          <button type="button" class="btn btn-perigo" id="btn-fechar-caixa">Fechar caixa</button>
+        </div>
+      </div>
+
+      <div class="painel" style="margin-top: 1.5rem;">
+        <h2>Histórico de sessões</h2>
+        <table>
+          <thead><tr><th>Abertura</th><th>Fechamento</th><th>Valor abertura</th><th>Valor informado</th><th>Status</th></tr></thead>
+          <tbody id="tabela-sessoes-caixa"></tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/icones.js"></script>
+  <script src="../js/layout.js"></script>
+  <script src="../js/caixa.js"></script>
+  <script src="../js/pwa.js"></script>
+</body>
+</html>

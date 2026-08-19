@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Redefinir senha — Ferragista+</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <script src="../js/tema.js"></script>
+  <link rel="icon" href="/assets/img/icon-192.png" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#d15a12" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="apple-touch-icon" href="/assets/img/icon-192.png" />
+</head>
+<body>
+  <div class="tela-auth">
+    <div class="marca-auth">
+      <div class="marca-icone"></div>
+      <strong>Ferragista+</strong>
+    </div>
+    <div class="cartao-auth">
+      <h1>Redefinir senha</h1>
+      <form id="form-redefinir">
+        <div class="campo">
+          <label for="nova-senha">Nova senha</label>
+          <input type="password" id="nova-senha" required minlength="6" />
+        </div>
+        <button type="submit" class="btn" style="width: 100%;">Redefinir senha</button>
+        <p id="erro-redefinir" class="mensagem-erro oculto"></p>
+      </form>
+      <p style="text-align: center; margin-top: 1.2rem; font-size: 0.85rem;">
+        <a href="login.html" style="color: var(--cor-primaria); font-weight: 600; text-decoration: none;">Voltar ao login</a>
+      </p>
+    </div>
+  </div>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/icones.js"></script>
+  <script>
+    document.querySelector(".marca-icone").innerHTML = svgIcone("wrench");
+    const token = new URLSearchParams(window.location.search).get("token");
+
+    document.getElementById("form-redefinir").addEventListener("submit", async (evento) => {
+      evento.preventDefault();
+      const erroEl = document.getElementById("erro-redefinir");
+      try {
+        await Api.redefinirSenha(token, document.getElementById("nova-senha").value);
+        window.location.href = "/pages/login.html";
+      } catch (erro) {
+        erroEl.textContent = erro.message;
+        erroEl.classList.remove("oculto");
+      }
+    });
+  </script>
+  <script src="../js/pwa.js"></script>
+</body>
+</html>

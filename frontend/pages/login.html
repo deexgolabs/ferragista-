@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Login — Ferragista+</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <script src="../js/tema.js"></script>
+  <link rel="icon" href="/assets/img/icon-192.png" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#d15a12" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="apple-touch-icon" href="/assets/img/icon-192.png" />
+</head>
+<body>
+  <div class="tela-auth">
+    <div class="marca-auth">
+      <div class="marca-icone"></div>
+      <strong>Ferragista+</strong>
+      <span>Sistema de gestão para ferragistas</span>
+    </div>
+    <div class="cartao-auth">
+      <h1>Entrar na sua conta</h1>
+      <form id="form-login">
+        <div class="campo">
+          <label for="email">E-mail</label>
+          <input type="email" id="email" required autocomplete="username" />
+        </div>
+        <div class="campo">
+          <label for="senha">Senha</label>
+          <input type="password" id="senha" required autocomplete="current-password" />
+        </div>
+        <button type="submit" class="btn" style="width: 100%;">Entrar</button>
+        <p id="erro-login" class="mensagem-erro oculto"></p>
+      </form>
+      <p style="text-align: center; margin-top: 1.2rem; font-size: 0.85rem;">
+        <a href="recuperar-senha.html" style="color: var(--cor-primaria); font-weight: 600; text-decoration: none;">Esqueci minha senha</a>
+      </p>
+      <p style="text-align: center; margin-top: 0.5rem; font-size: 0.85rem;">
+        <span>Sua loja ainda não tem conta?</span>
+        <a href="cadastro-loja.html" style="color: var(--cor-primaria); font-weight: 600; text-decoration: none;">Cadastre-se grátis</a>
+      </p>
+    </div>
+  </div>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/icones.js"></script>
+  <script src="../js/auth.js"></script>
+  <script>
+    document.querySelector(".marca-icone").innerHTML = svgIcone("wrench");
+  </script>
+  <script src="../js/pwa.js"></script>
+</body>
+</html>

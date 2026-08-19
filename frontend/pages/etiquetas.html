@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Etiquetas — Ferragista+</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <script src="../js/tema.js"></script>
+  <link rel="icon" href="/assets/img/icon-192.png" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#d15a12" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="apple-touch-icon" href="/assets/img/icon-192.png" />
+  <style>
+    .grade-etiquetas {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.6rem;
+      margin-top: 1rem;
+    }
+    .etiqueta {
+      border: 1px dashed var(--cor-borda-forte);
+      border-radius: var(--raio-sm);
+      padding: 0.6rem;
+      text-align: center;
+      background: #fff;
+    }
+    .etiqueta .nome { font-size: 0.8rem; font-weight: 700; color: #111; margin-bottom: 0.2rem; }
+    .etiqueta .preco { font-size: 1rem; font-weight: 800; color: #111; margin-bottom: 0.3rem; }
+    .etiqueta img { max-width: 100%; }
+    @media print {
+      .oculto-impressao { display: none !important; }
+      .grade-etiquetas { gap: 0.3rem; }
+      body, .conteudo { padding: 0 !important; }
+      .barra-lateral, .btn-menu-mobile { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div id="barra-lateral" data-pagina="etiquetas" class="oculto-impressao"></div>
+    <main class="conteudo">
+      <div class="topo-pagina oculto-impressao">
+        <h1>Etiquetas com código de barras</h1>
+        <button type="button" class="btn" id="btn-imprimir-etiquetas">Imprimir</button>
+      </div>
+
+      <div class="painel oculto-impressao">
+        <div class="form-inline">
+          <input type="text" id="busca-produto-etiqueta" placeholder="Buscar produto por nome ou código..." style="flex: 1; min-width: 220px;" />
+        </div>
+        <p class="texto-suave-pequeno">Só produtos com código/SKU cadastrado podem gerar etiqueta. Marque os que quiser e informe a quantidade de cópias.</p>
+        <table>
+          <thead><tr><th></th><th>Produto</th><th>Código</th><th>Preço</th><th>Cópias</th></tr></thead>
+          <tbody id="tabela-selecao-produtos"></tbody>
+        </table>
+        <button type="button" class="btn" id="btn-gerar-etiquetas" style="margin-top: 1rem;">Gerar etiquetas</button>
+      </div>
+
+      <div class="grade-etiquetas" id="grade-etiquetas"></div>
+    </main>
+  </div>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/icones.js"></script>
+  <script src="../js/layout.js"></script>
+  <script src="../js/etiquetas.js"></script>
+  <script src="../js/pwa.js"></script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Painel — Ferragista+</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <script src="../js/tema.js"></script>
+  <link rel="icon" href="/assets/img/icon-192.png" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#d15a12" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="apple-touch-icon" href="/assets/img/icon-192.png" />
+</head>
+<body>
+  <div class="app">
+    <div id="barra-lateral" data-pagina="dashboard"></div>
+    <main class="conteudo">
+      <div class="topo-pagina">
+        <h1>Painel geral</h1>
+      </div>
+
+      <div class="grade-indicadores" id="grade-indicadores">
+        <div class="indicador">
+          <div class="indicador-icone" data-icone="cart"></div>
+          <div><div class="valor" id="valor-vendas-hoje">—</div><div class="rotulo">Vendas hoje</div></div>
+        </div>
+        <div class="indicador">
+          <div class="indicador-icone" data-icone="dollar"></div>
+          <div><div class="valor" id="valor-vendas-mes">—</div><div class="rotulo">Vendas no mês</div></div>
+        </div>
+        <div class="indicador">
+          <div class="indicador-icone" data-icone="box"></div>
+          <div><div class="valor" id="valor-estoque-baixo">—</div><div class="rotulo">Produtos com estoque baixo</div></div>
+        </div>
+        <div class="indicador">
+          <div class="indicador-icone" data-icone="barChart"></div>
+          <div><div class="valor" id="valor-saldo">—</div><div class="rotulo">Saldo financeiro</div></div>
+        </div>
+      </div>
+
+      <div class="grade-cartoes" style="margin-bottom: 1.5rem;">
+        <div class="painel">
+          <h2>Contas a receber</h2>
+          <div class="valor" id="valor-a-receber" style="font-size: 1.6rem;">—</div>
+        </div>
+        <div class="painel">
+          <h2>Contas a pagar</h2>
+          <div class="valor" id="valor-a-pagar" style="font-size: 1.6rem;">—</div>
+        </div>
+      </div>
+
+      <div class="painel">
+        <h2>Produtos mais vendidos (30 dias)</h2>
+        <table>
+          <thead><tr><th>Produto</th><th>Quantidade vendida</th><th>Valor total</th></tr></thead>
+          <tbody id="tabela-mais-vendidos"></tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/icones.js"></script>
+  <script src="../js/layout.js"></script>
+  <script src="../js/dashboard.js"></script>
+  <script src="../js/pwa.js"></script>
+</body>
+</html>

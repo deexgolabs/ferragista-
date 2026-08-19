@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Meu perfil — Ferragista+</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <script src="../js/tema.js"></script>
+  <link rel="icon" href="/assets/img/icon-192.png" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#d15a12" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="apple-touch-icon" href="/assets/img/icon-192.png" />
+</head>
+<body>
+  <div class="app">
+    <div id="barra-lateral" data-pagina="meu-perfil"></div>
+    <main class="conteudo">
+      <div class="topo-pagina">
+        <h1>Meu perfil</h1>
+      </div>
+
+      <div class="grid-2col">
+        <div class="painel">
+          <h2>Meus dados</h2>
+          <form id="form-perfil">
+            <div class="campo"><label>Nome</label><input type="text" id="perfil-nome" required /></div>
+            <div class="campo"><label>E-mail</label><input type="email" id="perfil-email" required /></div>
+            <button type="submit" class="btn">Salvar alterações</button>
+            <p id="mensagem-perfil" class="oculto" style="margin-top: 0.8rem; font-size: 0.85rem;"></p>
+          </form>
+        </div>
+
+        <div class="painel">
+          <h2>Trocar senha</h2>
+          <form id="form-senha">
+            <div class="campo"><label>Senha atual</label><input type="password" id="senha-atual" required /></div>
+            <div class="campo"><label>Nova senha</label><input type="password" id="senha-nova" required minlength="6" /></div>
+            <button type="submit" class="btn">Trocar senha</button>
+            <p id="mensagem-senha" class="oculto" style="margin-top: 0.8rem; font-size: 0.85rem;"></p>
+          </form>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/icones.js"></script>
+  <script src="../js/layout.js"></script>
+  <script src="../js/meu-perfil.js"></script>
+  <script src="../js/pwa.js"></script>
+</body>
+</html>
